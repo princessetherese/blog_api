@@ -16,43 +16,27 @@ exports.create = (req, res) => {
 
 // GET ALL
 exports.getAll = (req, res) => {
-  let { page, limit, categorie, date } = req.query;
+  let { page, limit } = req.query;
 
   page = parseInt(page) || 1;
   limit = parseInt(limit) || 5;
 
   const offset = (page - 1) * limit;
 
-  let sql = "SELECT * FROM articles WHERE 1=1";
-  let params = [];
-
-  if (categorie) {
-    sql += " AND categorie = ?";
-    params.push(categorie);
-  }
-
-  if (date) {
-    sql += " AND DATE(date_creation) = ?";
-    params.push(date);
-  }
-
-  sql += " LIMIT ? OFFSET ?";
-  params.push(limit, offset);
+  const sql = "SELECT * FROM articles LIMIT ? OFFSET ?";
 
   const db = require("../config/db");
 
-  db.query(sql, params, (err, results) => {
+  db.query(sql, [limit, offset], (err, results) => {
     if (err) return res.status(500).json(err);
 
     res.json({
       page,
       limit,
-      filters: { categorie, date },
       data: results,
     });
   });
 };
-
 // GET ONE
 exports.getOne = (req, res) => {
   const id = req.params.id;

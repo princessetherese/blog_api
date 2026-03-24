@@ -1,6 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const controller = require("../controllers/articleController");
+const authMiddleware = require("../middleware/authMiddleware");
+
+router.post("/articles", authMiddleware, controller.create);
+router.put("/articles/:id", authMiddleware, controller.update);
+router.delete("/articles/:id", authMiddleware, controller.delete);
 
 /**
  * @swagger
